@@ -1,1 +1,1 @@
-# otus-project
+otus-project
