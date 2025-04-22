@@ -1,4 +1,4 @@
-name: Full Deploy (Infra + App)
+name: Full
 
 on:
   push:
@@ -17,9 +17,6 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-
       - name: Terraform Init & Apply
         working-directory: terraform
         run: |
@@ -32,11 +29,6 @@ jobs:
         run: |
           ip=$(terraform output -raw ingress_static_ip)
           echo "ip=$ip" >> $GITHUB_OUTPUT
-
-      - name: Setup kubectl
-        uses: azure/setup-kubectl@v3
-        with:
-          version: '1.28.0'
 
       - name: Get kubeconfig from Yandex Cloud
         run: |
