@@ -35,9 +35,7 @@ jobs:
           
       - name: Setup kubectl
         uses: azure/setup-kubectl@v3
-        with:
-          version: '1.32.3'    
-
+      
       - name: Get kubeconfig from Yandex Cloud
         run: |
           yc config set token "$TF_VAR_yc_token"
