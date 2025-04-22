@@ -36,6 +36,12 @@ jobs:
       - name: Setup kubectl
         uses: azure/setup-kubectl@v3
       
+       steps:
+      - name: Install Yandex Cloud CLI
+        run: |
+          curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
+          echo "$HOME/yandex-cloud/bin" >> $GITHUB_PATH
+      
       - name: Get kubeconfig from Yandex Cloud
         run: |
           yc config set token "$TF_VAR_yc_token"
