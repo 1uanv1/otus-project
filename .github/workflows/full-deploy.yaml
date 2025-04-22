@@ -1,0 +1,74 @@
+name: Full Deploy (Infra + App)
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      YC_OAUTH_TOKEN: ${{ secrets.YC_OAUTH_TOKEN }}
+      YC_CLOUD_ID: ${{ secrets.YC_CLOUD_ID }}
+      YC_FOLDER_ID: ${{ secrets.YC_FOLDER_ID }}
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init & Apply
+        working-directory: terraform
+        run: |
+          terraform init
+          terraform apply -auto-approve
+
+      - name: Extract Static IP
+        id: tfip
+        working-directory: terraform
+        run: |
+          ip=$(terraform output -raw ingress_static_ip)
+          echo "ip=$ip" >> $GITHUB_OUTPUT
+
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: '1.28.0'
+
+      - name: Get kubeconfig from Yandex Cloud
+        run: |
+          yc config set token "$YC_OAUTH_TOKEN"
+          yc config set cloud-id "$YC_CLOUD_ID"
+          yc config set folder-id "$YC_FOLDER_ID"
+          yc managed-kubernetes cluster get-credentials <CLUSTER_NAME> --external
+
+      - name: Replace templates with IP
+        run: |
+          IP="${{ steps.tfip.outputs.ip }}"
+          DOMAIN="hipster.${IP//./-}.nip.io"
+          echo "Static IP: $IP"
+          echo "Domain: $DOMAIN"
+
+          sed "s|<STATIC_IP>|$IP|g" helm/nginx-values.yaml.template > helm/nginx-values.yaml
+          sed "s|<NIP_DOMAIN>|$DOMAIN|g" kubernetes-manifests/ingress.yaml.template > kubernetes-manifests/ingress.yaml
+
+      - name: Install Ingress Controller
+        run: |
+          helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+          helm repo update
+          helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx \
+            -n ingress-nginx --create-namespace \
+            -f helm/nginx-values.yaml
+
+      - name: Deploy App
+        run: |
+          helm repo add microservices-demo https://googlecloudplatform.github.io/microservices-demo
+          helm repo update
+          helm upgrade --install hipster-shop microservices-demo/microservices-demo \
+            --namespace hipster --create-namespace
+
+      - name: Apply Ingress
+        run: kubectl apply -f kubernetes-manifests/ingress.yaml
