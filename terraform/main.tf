@@ -1,8 +1,17 @@
+terraform {
+  required_providers {
+    yandex = {
+      source = "yandex-cloud/yandex"
+    }
+  }
+  required_version = ">= 0.13"
+}
+
 provider "yandex" {
+  zone      = var.zone
   token     = var.token
   cloud_id  = var.cloud_id
   folder_id = var.folder_id
-  zone      = var.zone
 }
 
 resource "yandex_vpc_network" "default" {
@@ -17,7 +26,7 @@ resource "yandex_vpc_subnet" "default" {
 }
 
 resource "yandex_kubernetes_cluster" "k8s" {
-  name       = "demo-cluster"
+  name       = "cluster"
   network_id = yandex_vpc_network.default.id
 
   master {
@@ -35,7 +44,7 @@ resource "yandex_kubernetes_cluster" "k8s" {
 
 resource "yandex_kubernetes_node_group" "nodes" {
   cluster_id = yandex_kubernetes_cluster.k8s.id
-  name       = "demo-nodes"
+  name       = "nodes"
 
   instance_template {
     platform_id = "standard-v1"
@@ -49,6 +58,7 @@ resource "yandex_kubernetes_node_group" "nodes" {
     }
     network_interface {
       subnet_ids = [yandex_vpc_subnet.default.id]
+      nat        = true  
     }
   }
 

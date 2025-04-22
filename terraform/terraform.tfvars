@@ -1,4 +1,4 @@
-token       = "your_token_here"
-cloud_id    = "your_cloud_id_here"
-folder_id   = "your_folder_id_here"
-k8s_sa_id   = "your_k8s_sa_id_here"
+token     = "t1.9euelZqZmJXIkc6expmcxo2Ym8-Qje3rnpWaypmUnsaKypnGx4uLi52blpbl8_cQUmY_-e9hBEwh_d3z91AAZD_572EETCH9zef1656VmoudlZ3Px4yKm82OxoyMj46c7_zF656VmoudlZ3Px4yKm82OxoyMj46c.ejdVdQliW7BwUxHyEz0zrt7SEwb9Mr_jzdNBHKB8rsTCzXi-5Pesg-M_xsUuiewEfMOTr8B1t72aHVdIzz4pAQ"
+cloud_id  = "b1gms2nad5fs4qqeifo5"
+folder_id = "b1ge2dd9u82e5pqrc35i"
+k8s_sa_id = "aje1tjir45bubh5ul8tg"
