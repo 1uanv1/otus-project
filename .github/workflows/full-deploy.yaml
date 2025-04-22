@@ -41,12 +41,16 @@ jobs:
           curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
           echo "$HOME/yandex-cloud/bin" >> $GITHUB_PATH
       
+      - name: Get cluster name from Terraform output
+        id: cluster
+        run: echo "CLUSTER_NAME=$(terraform output -raw cluster_name)" >> $GITHUB_ENV
+      
       - name: Get kubeconfig from Yandex Cloud
         run: |
           yc config set token "$TF_VAR_yc_token"
           yc config set cloud-id "$TF_VAR_yc_cloud_id"
           yc config set folder-id "$TF_VAR_yc_folder_id"
-          yc managed-kubernetes cluster get-credentials <CLUSTER_NAME> --external
+          yc managed-kubernetes cluster get-credentials ${{ env.CLUSTER_NAME }} --external
 
       - name: Replace templates with IP
         run: |
