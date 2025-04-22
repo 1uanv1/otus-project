@@ -14,6 +14,12 @@ jobs:
       TF_VAR_yc_folder_id: ${{ secrets.YC_FOLDER_ID }}
 
     steps:
+      - name: Check environment variables
+        run: |
+          echo "YC_OAUTH_TOKEN: ${{ secrets.YC_OAUTH_TOKEN }}"
+          echo "YC_CLOUD_ID: ${{ secrets.YC_CLOUD_ID }}"
+          echo "YC_FOLDER_ID: ${{ secrets.YC_FOLDER_ID }}"
+          
       - name: Checkout repo
         uses: actions/checkout@v3
         
