@@ -21,27 +21,15 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3  
       
-      - name: Terraform Init
-        run: terraform init
-        working-directory: ./terraform
-      
-      - name: Terraform Apply
-        run: terraform apply -auto-approve
-        working-directory: ./terraform
-        
-      - name: Terraform Output
-        run: terraform output
-        working-directory: ./terraform  
-
-#      - name: Terraform Init & Apply
-#        working-directory: terraform
-#        run: |
-#          terraform init
-#          terraform apply -auto-approve
+      - name: Terraform Init & Apply
+        working-directory: terraform
+        run: |
+          terraform init
+          terraform apply -auto-approve
 
       - name: Extract Static IP
         id: tfip
-        working-directory: ./terraform
+        working-directory: terraform
         run: |
           ip=$(terraform output -raw ingress_static_ip)
           echo "ip=$ip" >> $GITHUB_OUTPUT
@@ -56,14 +44,17 @@ jobs:
       
       - name: Get cluster name from Terraform output
         id: cluster
-        run: echo "CLUSTER_NAME=$(terraform output -raw cluster_name)" >> $GITHUB_ENV
+        working-directory: terraform
+        run: |
+          name=$(terraform output -raw cluster_name 2>/dev/null || echo "")
+          echo "name=$name" >> $GITHUB_OUTPUT
       
       - name: Get kubeconfig from Yandex Cloud
         run: |
           yc config set token "$TF_VAR_token"
           yc config set cloud-id "$TF_VAR_cloud_id"
           yc config set folder-id "$TF_VAR_folder_id"
-          yc managed-kubernetes cluster get-credentials --name $CLUSTER_NAME --external
+          yc managed-kubernetes cluster get-credentials --name ${{ steps.cluster.outputs.name }} --external
 
       - name: Replace templates with IP
         run: |
