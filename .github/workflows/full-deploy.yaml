@@ -23,15 +23,15 @@ jobs:
       
       - name: Terraform Init
         run: terraform init
-        working-directory: terraform
+        working-directory: ./terraform
       
       - name: Terraform Apply
         run: terraform apply -auto-approve
-        working-directory: terraform
+        working-directory: ./terraform
         
       - name: Terraform Output
         run: terraform output
-        working-directory: terraform  
+        working-directory: ./terraform  
 
 #      - name: Terraform Init & Apply
 #        working-directory: terraform
@@ -41,7 +41,7 @@ jobs:
 
       - name: Extract Static IP
         id: tfip
-        working-directory: terraform
+        working-directory: ./terraform
         run: |
           ip=$(terraform output -raw ingress_static_ip)
           echo "ip=$ip" >> $GITHUB_OUTPUT
