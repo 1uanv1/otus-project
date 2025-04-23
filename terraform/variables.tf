@@ -1,14 +1,16 @@
-variable "yc_token" {
-  description = "Yandex Cloud OAuth token"
+variable "token" {
   type        = string
 }
 
-variable "yc_cloud_id" {
-  description = "Yandex Cloud ID"
+variable "cloud_id" {
   type        = string
 }
 
-variable "yc_folder_id" {
-  description = "Yandex Folder ID"
+variable "folder_id" {
   type        = string
 }
+
+variable "sa_id" {
+  type        = string
+}
+

@@ -9,9 +9,10 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      TF_VAR_yc_token: ${{ secrets.yc_token }}
-      TF_VAR_yc_cloud_id: ${{ secrets.yc_cloud_id }}
-      TF_VAR_yc_folder_id: ${{ secrets.yc_folder_id }}
+      TF_VAR_token: ${{ secrets.token }}
+      TF_VAR_cloud_id: ${{ secrets.cloud_id }}
+      TF_VAR_folder_id: ${{ secrets.folder_id }}
+      TF_VAR_sa_id: ${{ secrets.sa_id }}
 
     steps:
       - name: Checkout repo
@@ -47,9 +48,9 @@ jobs:
       
       - name: Get kubeconfig from Yandex Cloud
         run: |
-          yc config set token "$TF_VAR_yc_token"
-          yc config set cloud-id "$TF_VAR_yc_cloud_id"
-          yc config set folder-id "$TF_VAR_yc_folder_id"
+          yc config set token "$TF_VAR_token"
+          yc config set cloud-id "$TF_VAR_cloud_id"
+          yc config set folder-id "$TF_VAR_folder_id"
           yc managed-kubernetes cluster get-credentials ${{ env.CLUSTER_NAME }} --external
 
       - name: Replace templates with IP

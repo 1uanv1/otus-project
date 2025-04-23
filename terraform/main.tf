@@ -8,9 +8,9 @@ terraform {
 }
 
 provider "yandex" {
-  token     = var.yc_token
-  cloud_id  = var.yc_cloud_id
-  folder_id = var.yc_folder_id
+  token     = var.token
+  cloud_id  = var.cloud_id
+  folder_id = var.folder_id
   zone      = "ru-central1-a"
 }
 
@@ -48,6 +48,9 @@ resource "yandex_kubernetes_cluster" "k8s" {
     }
     public_ip = true
   }
+  
+  service_account_id      = var.sa_id
+  node_service_account_id = var.sa_id
   release_channel = "RAPID"
 }
 
