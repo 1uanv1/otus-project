@@ -51,6 +51,7 @@ jobs:
       
       - name: Get kubeconfig from Yandex Cloud
         run: |
+          export PATH="$HOME/yandex-cloud/bin:$PATH"
           yc config set token "$TF_VAR_token"
           yc config set cloud-id "$TF_VAR_cloud_id"
           yc config set folder-id "$TF_VAR_folder_id"
