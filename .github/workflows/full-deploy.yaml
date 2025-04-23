@@ -41,7 +41,14 @@ jobs:
         run: |
           curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
           echo "$HOME/yandex-cloud/bin" >> $GITHUB_PATH
-      
+          
+      - name: Authenticate with Yandex Cloud using SA key
+        run: |
+          echo "${{ secrets.KEY }}" > key.json
+          export PATH="$HOME/yandex-cloud/bin:$PATH"
+          yc config set service-account-key key.json
+          yc config list
+          
       - name: Get cluster name from Terraform output
         id: cluster
         working-directory: terraform
