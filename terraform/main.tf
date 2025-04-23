@@ -33,10 +33,6 @@ resource "yandex_vpc_address" "ingress_ip" {
   }
 }
 
-output "ingress_static_ip" {
-  value = yandex_vpc_address.ingress_ip.external_ipv4_address[0].address
-}
-
 resource "yandex_kubernetes_cluster" "k8s" {
   name       = "cluster"
   network_id = yandex_vpc_network.default.id

@@ -20,12 +20,24 @@ jobs:
         
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3  
-
-      - name: Terraform Init & Apply
+      
+      - name: Terraform Init
+        run: terraform init
         working-directory: terraform
-        run: |
-          terraform init
-          terraform apply -auto-approve
+      
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
+        working-directory: terraform
+        
+      - name: Terraform Output
+        run: terraform output
+        working-directory: terraform  
+
+#      - name: Terraform Init & Apply
+#        working-directory: terraform
+#        run: |
+#          terraform init
+#          terraform apply -auto-approve
 
       - name: Extract Static IP
         id: tfip
@@ -43,9 +55,8 @@ jobs:
           echo "$HOME/yandex-cloud/bin" >> $GITHUB_PATH
       
       - name: Get cluster name from Terraform output
-        run: |
-          terraform output       
-          echo "CLUSTER_NAME=$(terraform output -raw cluster_name)" >> $GITHUB_ENV
+        id: cluster
+        run: echo "CLUSTER_NAME=$(terraform output -raw cluster_name)" >> $GITHUB_ENV
       
       - name: Get kubeconfig from Yandex Cloud
         run: |
