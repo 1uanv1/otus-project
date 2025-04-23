@@ -49,12 +49,16 @@ jobs:
           name=$(terraform output -raw cluster_name 2>/dev/null || echo "")
           echo "name=$name" >> $GITHUB_OUTPUT
       
+      - name: Debug token
+        run: echo "${{ secrets.token }}"
+  
       - name: Get kubeconfig from Yandex Cloud
         run: |
           export PATH="$HOME/yandex-cloud/bin:$PATH"
           yc config set token "$TF_VAR_token"
           yc config set cloud-id "$TF_VAR_cloud_id"
           yc config set folder-id "$TF_VAR_folder_id"
+          yc config list
           yc managed-kubernetes cluster get-credentials --name ${{ steps.cluster.outputs.name }} --external
 
       - name: Replace templates with IP
