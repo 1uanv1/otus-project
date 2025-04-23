@@ -51,7 +51,7 @@ jobs:
           yc config set token "$TF_VAR_token"
           yc config set cloud-id "$TF_VAR_cloud_id"
           yc config set folder-id "$TF_VAR_folder_id"
-          yc managed-kubernetes cluster get-credentials ${{ env.CLUSTER_NAME }} --external
+          yc managed-kubernetes cluster get-credentials --name ${{ env.CLUSTER_NAME }} --external
 
       - name: Replace templates with IP
         run: |
