@@ -47,7 +47,6 @@ jobs:
           
       - name: Authenticate with Yandex Cloud
         run: |
-#          echo "${{ secrets.KEY }}" | base64 -d > key.json
           export PATH="$HOME/yandex-cloud/bin:$PATH"
           yc config set service-account-key key.json
                     
@@ -60,7 +59,6 @@ jobs:
       
       - name: Get kubeconfig from Yandex Cloud
         run: |
-#          echo "${{ secrets.KEY }}" | base64 -d > key.json
           export PATH="$HOME/yandex-cloud/bin:$PATH"
           yc config profile activate default
           yc config set service-account-key key.json
