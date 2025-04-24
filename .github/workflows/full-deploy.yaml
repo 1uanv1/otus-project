@@ -21,6 +21,7 @@ jobs:
         uses: hashicorp/setup-terraform@v3  
         
       - name: Decode Service Account Key and save as key.json
+        working-directory: terraform
         run: |
           echo "${{ secrets.KEY }}" | base64 -d > key.json
                 
