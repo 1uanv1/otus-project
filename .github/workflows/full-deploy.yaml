@@ -7,7 +7,12 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
+    
+    env:
+      TF_VAR_cloud_id: ${{ secrets.cloud_id }}
+      TF_VAR_folder_id: ${{ secrets.folder_id }}
+      TF_VAR_sa_id: ${{ secrets.sa_id }}
+    
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
