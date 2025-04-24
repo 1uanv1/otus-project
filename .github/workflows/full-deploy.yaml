@@ -90,5 +90,9 @@ jobs:
           kubectl create namespace hipster || true
           kubectl apply -n hipster -f https://raw.githubusercontent.com/GoogleCloudPlatform/microservices-demo/main/release/kubernetes-manifests.yaml
 
+      - name: Wait for Ingress Controller to be ready
+        run: |
+          kubectl rollout status deployment ingress-nginx-controller -n ingress-nginx --timeout=120s
+
       - name: Apply Ingress
         run: kubectl apply -f kubernetes-manifests/ingress.yaml
