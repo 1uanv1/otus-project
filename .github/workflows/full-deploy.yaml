@@ -59,13 +59,14 @@ jobs:
       
       - name: Get kubeconfig from Yandex Cloud
         run: |
+          echo "${{ secrets.KEY }}" | base64 -d > key.json
           export PATH="$HOME/yandex-cloud/bin:$PATH"
-          yc config set token "${{ secrets.token }}"
+          yc config profile activate default
+          yc config set service-account-key key.json
           yc config set cloud-id "${{ secrets.cloud_id }}"
           yc config set folder-id "${{ secrets.folder_id }}"
-          yc config list
-          yc managed-kubernetes cluster get-credentials --name ${{ steps.cluster.outputs.name }} --external
-
+          yc managed-kubernetes cluster get-credentials --name "${{ steps.cluster.outputs.name }}" --external
+          
       - name: Replace templates with IP
         run: |
           IP="${{ steps.tfip.outputs.ip }}"
