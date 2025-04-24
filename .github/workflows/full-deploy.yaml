@@ -8,12 +8,6 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
-    env:
-      TF_VAR_token: ${{ secrets.token }}
-      TF_VAR_cloud_id: ${{ secrets.cloud_id }}
-      TF_VAR_folder_id: ${{ secrets.folder_id }}
-      TF_VAR_sa_id: ${{ secrets.sa_id }}
-
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -45,11 +39,9 @@ jobs:
       - name: Authenticate with Yandex Cloud using SA key
         run: |
           echo "${{ secrets.KEY }}" | base64 -d > key.json
-          jq . key.json || echo "⚠️ JSON malformed"
           export PATH="$HOME/yandex-cloud/bin:$PATH"
           yc config set service-account-key key.json
-          yc config list
-          
+                    
       - name: Get cluster name from Terraform output
         id: cluster
         working-directory: terraform
@@ -85,12 +77,10 @@ jobs:
             -n ingress-nginx --create-namespace \
             -f helm/nginx-values.yaml
 
-      - name: Deploy App
+      - name: Deploy App from original Kubernetes manifest
         run: |
-          helm repo add microservices-demo https://googlecloudplatform.github.io/microservices-demo
-          helm repo update
-          helm upgrade --install hipster-shop microservices-demo/microservices-demo \
-            --namespace hipster --create-namespace
+          kubectl create namespace hipster || true
+          kubectl apply -n hipster -f https://raw.githubusercontent.com/GoogleCloudPlatform/microservices-demo/main/release/kubernetes-manifests.yaml
 
       - name: Apply Ingress
         run: kubectl apply -f kubernetes-manifests/ingress.yaml
