@@ -44,9 +44,8 @@ jobs:
           
       - name: Authenticate with Yandex Cloud using SA key
         run: |
-          cat <<EOF > key.json
-          ${{ secrets.KEY }}
-          EOF
+          echo "${{ secrets.KEY }}" | base64 -d > key.json
+          jq . key.json || echo "⚠️ JSON malformed"
           export PATH="$HOME/yandex-cloud/bin:$PATH"
           yc config set service-account-key key.json
           yc config list
