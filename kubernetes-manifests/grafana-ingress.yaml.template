@@ -4,9 +4,9 @@ metadata:
   name: grafana
   namespace: monitoring
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
 spec:
+  ingressClassName: nginx
   rules:
     - host: grafana.<NIP_DOMAIN>
       http:
