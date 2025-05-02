@@ -1,0 +1,31 @@
+grafana:
+  adminPassword: admin
+  service:
+    type: LoadBalancer
+  defaultDashboardsEnabled: true
+  additionalDataSources:
+    - name: Loki
+      type: loki
+      access: proxy
+      url: http://loki.logging.svc.cluster.local:3100
+      isDefault: false
+      jsonData:
+        maxLines: 1000
+  dashboards:
+    default:
+      node-exporter:
+        gnetId: 1860
+        revision: 29
+        datasource: Prometheus
+      kubernetes-cluster:
+        gnetId: 315
+        revision: 2
+        datasource: Prometheus
+      loki-logs:
+        gnetId: 13407
+        revision: 1
+        datasource: Loki
+        
+prometheus:
+  prometheusSpec:
+    serviceMonitorSelectorNilUsesHelmValues: false        

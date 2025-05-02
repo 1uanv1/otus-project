@@ -96,3 +96,25 @@ jobs:
 
       - name: Apply Ingress
         run: kubectl apply -f kubernetes-manifests/ingress.yaml
+        
+      - name: Install kube-prometheus-stack 
+        run: |
+          helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+          helm repo update
+          helm upgrade --install prometheus prometheus-community/kube-prometheus-stack \
+            -n monitoring --create-namespace \
+            -f helm/prometheus-values.yaml
+
+      - name: Install Loki stack with Promtail 
+        run: |
+          helm repo add grafana https://grafana.github.io/helm-charts
+          helm repo update
+          helm upgrade --install loki grafana/loki-stack \
+            -n logging --create-namespace \
+            -f helm/loki-values.yaml
+
+      - name: Apply Grafana Ingress 
+        run: |
+          DOMAIN="hipster.${{ steps.tfip.outputs.ip // ./- }}.nip.io"
+          sed "s|<NIP_DOMAIN>|$DOMAIN|g" kubernetes-manifests/grafana-ingress.yaml.template > kubernetes-manifests/grafana-ingress.yaml
+          kubectl apply -f kubernetes-manifests/grafana-ingress.yaml
