@@ -115,9 +115,8 @@ jobs:
 
       - name: Apply Grafana Ingress 
         run: |
-          DOMAIN="hipster.${{ steps.tfip.outputs.ip }}"
-          DOMAIN="${DOMAIN//./-}"
-          DOMAIN="${DOMAIN}.nip.io"
+          IP="${{ steps.tfip.outputs.ip }}"
+          DOMAIN="grafana.${IP//./-}.nip.io"
           sed "s|<NIP_DOMAIN>|$DOMAIN|g" kubernetes-manifests/grafana-ingress.yaml.template > kubernetes-manifests/grafana-ingress.yaml
           kubectl apply -f kubernetes-manifests/grafana-ingress.yaml
           
