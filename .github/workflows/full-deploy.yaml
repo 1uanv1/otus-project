@@ -70,7 +70,7 @@ jobs:
       - name: Replace templates with IP
         run: |
           IP="${{ steps.tfip.outputs.ip }}"
-          DOMAIN="hipster.$IP"
+          DOMAIN="hipster.${IP}"
      	  DOMAIN=$(echo "$DOMAIN" | sed 's/\./-/g')
     	  DOMAIN="${DOMAIN}.nip.io"
 
