@@ -70,10 +70,9 @@ jobs:
       - name: Replace templates with IP
         run: |
           IP="${{ steps.tfip.outputs.ip }}"
-          DOMAIN="hipster.${IP}"
-          DOMAIN=$(echo "$DOMAIN" | sed 's/\./-/g')
-          echo "Static IP: $IP"
-          echo "Domain: $DOMAIN"
+          DOMAIN="hipster.$IP"
+     	  DOMAIN=$(echo "$DOMAIN" | sed 's/\./-/g')
+    	  DOMAIN="${DOMAIN}.nip.io"
 
           sed "s|<STATIC_IP>|$IP|g" helm/nginx-values.yaml.template > helm/nginx-values.yaml
           sed "s|<NIP_DOMAIN>|$DOMAIN|g" kubernetes-manifests/ingress.yaml.template > kubernetes-manifests/ingress.yaml
@@ -117,6 +116,18 @@ jobs:
       - name: Apply Grafana Ingress 
         run: |
           DOMAIN="hipster.${{ steps.tfip.outputs.ip }}"
-          DOMAIN=$(echo "$DOMAIN" | sed 's/\./-/g')  # 🔥 Заменили точки на дефисы
+          DOMAIN=$(echo "$DOMAIN" | sed 's/\./-/g')
+          DOMAIN="${DOMAIN}.nip.io"
           sed "s|<NIP_DOMAIN>|$DOMAIN|g" kubernetes-manifests/grafana-ingress.yaml.template > kubernetes-manifests/grafana-ingress.yaml
           kubectl apply -f kubernetes-manifests/grafana-ingress.yaml
+          
+      - name: Output application and Grafana URLs
+        run: |
+          IP="${{ steps.tfip.outputs.ip }}"
+          DOMAIN="hipster.${IP//./-}.nip.io"
+          echo ""
+          echo "Приложение доступно по адресу:"
+          echo "   http://$DOMAIN"
+          echo ""
+          echo "Grafana доступна по адресу:"
+          echo "   http://grafana.$DOMAIN"    
