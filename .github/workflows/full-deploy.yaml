@@ -70,7 +70,8 @@ jobs:
       - name: Replace templates with IP
         run: |
           IP="${{ steps.tfip.outputs.ip }}"
-          DOMAIN="hipster.${IP//./-}.nip.io"
+          DOMAIN="hipster.${IP}"
+          DOMAIN=$(echo "$DOMAIN" | sed 's/\./-/g')
           echo "Static IP: $IP"
           echo "Domain: $DOMAIN"
 
@@ -115,6 +116,7 @@ jobs:
 
       - name: Apply Grafana Ingress 
         run: |
-          DOMAIN="hipster.${{ steps.tfip.outputs.ip // ./- }}.nip.io"
+          DOMAIN="hipster.${{ steps.tfip.outputs.ip }}"
+          DOMAIN=$(echo "$DOMAIN" | sed 's/\./-/g')  # 🔥 Заменили точки на дефисы
           sed "s|<NIP_DOMAIN>|$DOMAIN|g" kubernetes-manifests/grafana-ingress.yaml.template > kubernetes-manifests/grafana-ingress.yaml
           kubectl apply -f kubernetes-manifests/grafana-ingress.yaml
