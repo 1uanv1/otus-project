@@ -123,6 +123,6 @@ jobs:
       - name: Output application and Grafana URLs
         run: |
           IP="${{ steps.tfip.outputs.ip }}"
-          DOMAIN="hipster.${IP//./-}.nip.io"
-          echo "Your application is available at: http://${DOMAIN}"
-          echo "Grafana is available at: http://grafana.${DOMAIN}"
+          BASE_DOMAIN="${IP//./-}.nip.io"
+          echo "Your application is available at: http://hipster.${BASE_DOMAIN}"
+          echo "Grafana is available at: http://grafana.${BASE_DOMAIN}"
