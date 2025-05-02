@@ -8,7 +8,7 @@ metadata:
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
 spec:
   rules:
-    - host: grafana.<NIP_DOMAIN>
+    - host: grafana.${NIP_DOMAIN}
       http:
         paths:
           - path: /

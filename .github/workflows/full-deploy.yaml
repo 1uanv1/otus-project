@@ -123,8 +123,8 @@ jobs:
           
       - name: Output application and Grafana URLs
         run: |
-          DOMAIN="hipster.${{ steps.tfip.outputs.ip }}"
-          DOMAIN="${DOMAIN//./-}"
-          DOMAIN="${DOMAIN}.nip.io"
-          echo "Your application is available at: http://${DOMAIN}"
-          echo "Grafana is available at: http://${DOMAIN}:3000"    
+          IP="${{ steps.tfip.outputs.ip }}"
+    	  DOMAIN="hipster.${IP//./-}.nip.io"
+    	  GRAFANA_DOMAIN="grafana.${IP//./-}.nip.io"
+    	  echo "Your application is available at: http://${DOMAIN}"
+    	  echo "Grafana is available at: http://${GRAFANA_DOMAIN}"    
